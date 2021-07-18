@@ -15,7 +15,7 @@ interface PVDetailsProps {
 }
 
 export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
-  const [isVisible, setIsVisible] = useState(false)
+  const [isVisible, setIsVisible] = useState(true)
 
   const handleToggleVisibilty = () => {
     setIsVisible(!isVisible)
@@ -171,7 +171,7 @@ const Container = styled.div<{ isVisible: boolean }>`
 
   /** Card */
   > div {
-    visibility: ${({ isVisible }) => (isVisible ? 'visible' : 'hidden')};
+    display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
     background: white;
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
     border-radius: 5px;
