@@ -2,6 +2,7 @@ import { useEffect, useState, MutableRefObject } from 'react'
 import { Map } from 'mapbox-gl'
 import MapboxDraw from '@mapbox/mapbox-gl-draw'
 import * as turf from '@turf/turf'
+import { MAPBOX_CONTROL_LOCATION } from 'constants/index'
 
 export function useMapboxDraw(map: MutableRefObject<Map>) {
   const [area, setArea] = useState(0)
@@ -37,7 +38,7 @@ export function useMapboxDraw(map: MutableRefObject<Map>) {
     map.current.on('draw.update', () => updateArea(draw))
 
     // add control
-    map.current.addControl(draw, 'top-right')
+    map.current.addControl(draw, MAPBOX_CONTROL_LOCATION)
   }, [map])
 
   return { area, updateArea }

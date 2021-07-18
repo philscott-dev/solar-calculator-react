@@ -1,6 +1,7 @@
 import { Map } from 'mapbox-gl'
 import { useEffect, MutableRefObject } from 'react'
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder'
+import { MAPBOX_CONTROL_LOCATION } from 'constants/index'
 
 export function useGeocoder(map: MutableRefObject<Map>) {
   useEffect(() => {
@@ -15,6 +16,6 @@ export function useGeocoder(map: MutableRefObject<Map>) {
     })
 
     // Add Control: MapboxGeocoder
-    map.current.addControl(geocoder, 'top-right')
+    map.current.addControl(geocoder, MAPBOX_CONTROL_LOCATION)
   }, [map])
 }
