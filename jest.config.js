@@ -32,6 +32,7 @@ module.exports = {
   snapshotSerializers: [],
   modulePathIgnorePatterns: ['<rootDir>/.next/', '<rootDir>/cypress/'],
   coveragePathIgnorePatterns: ['<rootDir>/coverage'],
+  setupFiles: ['jest-webgl-canvas-mock'],
   globals: {
     'ts-jest': {
       tsConfig: 'tsconfig.jest.json',
