@@ -47,7 +47,6 @@ export default styled(PVInput)`
     padding: 0;
     margin: 0;
     border: 0;
-    font-family: Poppins;
     font-style: normal;
     font-weight: bold;
     font-size: 18px;
