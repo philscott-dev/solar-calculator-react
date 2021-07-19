@@ -10,7 +10,15 @@ Avg solar panel size
 https://news.energysage.com/average-solar-panel-size-weight/
 
 - Residential - 65 x 39 inches (62.4078 area - meters squared)
+  - 1651mm x 990.6mm
 - Commerical - 78 x 39 inches (77.2668 area - meters squared)
+  - 1981.2mm x 990.6mm
+
+Watts per panel
+
+
+https://us.sunpower.com/how-many-solar-panels-do-you-need-panel-size-and-output-factors
+"Conventional solar panels usually produce about 250 watts per panel"
 
 Average usage 
 
