@@ -1,7 +1,7 @@
 import 'jest/mocks/windowMock'
 import { renderHook, act } from '@testing-library/react-hooks'
 import { useMapbox, UseMapboxOptions } from 'hooks'
-import { getMapMock } from '../../jest/util'
+import { getMapMock } from '../../jest/mocks/getMapMock'
 
 describe('useMapbox', () => {
   let mapInstance
