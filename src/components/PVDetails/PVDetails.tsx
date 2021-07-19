@@ -99,7 +99,7 @@ export const PVDetails: FC<PVDetailsProps> = ({
   return (
     <Container className={className} isVisible={isVisible}>
       <IconButton onMouseDown={handleToggleVisibilty}>
-        <FiZap />
+        <FiZap /> PV Details
       </IconButton>
       <div>
         <header>

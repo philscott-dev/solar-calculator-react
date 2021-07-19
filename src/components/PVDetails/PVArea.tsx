@@ -1,5 +1,7 @@
 import styled from '@emotion/styled'
+import { useMemo } from 'react'
 import { FC } from 'react'
+import { FaVectorSquare } from 'react-icons/fa'
 
 interface PVAreaProps {
   className?: string
@@ -9,9 +11,14 @@ interface PVAreaProps {
 }
 
 export const PVArea: FC<PVAreaProps> = ({ className, area, kW, error }) => {
+  const segments = useMemo(() => (error ? error.split('[') : null), [error])
   return (
     <Container className={className} isError={error?.length > 0}>
-      {error ? <small>{error}</small> : null}
+      {error ? (
+        <small>
+          {segments[0]} [ <FaVectorSquare /> {segments[1]}
+        </small>
+      ) : null}
       <div>
         <label>Nominal Power:</label>
         <div>
@@ -76,5 +83,11 @@ const Container = styled.div<{ isError: boolean }>`
     font-size: 13px;
     margin-bottom: 8px;
     font-weight: 400;
+  }
+
+  > small svg {
+    height: 12px;
+    width: 12px;
+    margin-bottom: -1.5px;
   }
 `

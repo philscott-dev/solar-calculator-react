@@ -33,7 +33,7 @@ const PVSelect: FC<PVSelectProps> = ({
 }
 
 export default styled(PVSelect)`
-  display: flex;
+  /* display: flex;
   position: relative;
   flex-wrap: wrap;
   flex-direction: column;
@@ -71,5 +71,5 @@ export default styled(PVSelect)`
     line-height: 21px;
     margin: 2px 0px;
     color: #7d8387;
-  }
+  } */
 `
