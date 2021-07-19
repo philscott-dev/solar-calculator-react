@@ -17,6 +17,10 @@ const App = ({ Component, pageProps }: AppProps) => {
           content="width=device-width, initial-scale = 1.0, maximum-scale=1.0, user-scalable=no"
         />
         <meta name="mobile-web-app-capable" content="yes" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Poppins:100,300,400,500,700,900&display=swap"
+        ></link>
       </Head>
 
       <ThemeProvider theme={theme}>
