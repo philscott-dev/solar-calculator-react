@@ -1,42 +1,60 @@
 import styled from '@emotion/styled'
-import { FC, useState } from 'react'
+import { FC, useState, useMemo } from 'react'
 import { useFormik } from 'formik'
 import { FiX, FiZap } from 'react-icons/fi'
 import PVSelect from './PVSelect'
 import PVInput from './PVInput'
 import PVRow from './PVRow'
+import PVOutput from './PVOutput'
 import { ArrayType } from 'enums/ArrayType'
 import { InstallType } from 'enums/InstallType'
 import { ModuleType } from 'enums/ModuleType'
+import { useEffect } from 'react'
+import { Button } from 'components/Button'
+import { getPVWatts } from 'services'
+import PVArea from './PVArea'
+import { calculateNominalPower } from 'helpers/power'
 
 interface PVDetailsProps {
   className?: string
   area: number
+  latitude: number
+  longitude: number
 }
 
-export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
+export const PVDetails: FC<PVDetailsProps> = ({
+  className,
+  area,
+  longitude,
+  latitude,
+}) => {
   const [isVisible, setIsVisible] = useState(true)
+  const [annualProduction, setAnnualProduction] = useState(0)
+  const nominalPower = useMemo(() => calculateNominalPower(area) || 0, [area])
 
-  const handleToggleVisibilty = () => {
-    setIsVisible(!isVisible)
-  }
   const formik = useFormik({
     initialValues: {
       tilt: 0,
       orientation: 0,
+      area,
       arrayType: ArrayType.FixedOpenRack,
       installType: InstallType.Residential,
       moduleType: ModuleType.Standard,
     },
     validate: (values) => {
-      console.log(values)
       let errors = {}
+      /**
+       * Tilt Validators
+       */
       if (values.tilt < 0) {
         errors = { ...errors, tilt: 'Must be 0 or more' }
       } else if (values.tilt > 90) {
         errors = { ...errors, tilt: 'Must be 90 or less' }
       }
 
+      /**
+       * Orientation Validators
+       */
       if (values.orientation < 0) {
         errors = {
           ...errors,
@@ -45,15 +63,45 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
       } else if (values.orientation >= 360) {
         errors = { ...errors, orientation: 'Must be less than 360' }
       }
-      console.log(errors)
+
+      /**
+       * Area Validators
+       */
+
+      if (values.area <= 0) {
+        errors = {
+          ...errors,
+          area: 'Please use the polygon tool to create an installation.',
+        }
+      }
       return errors
     },
-    onSubmit: (e) => {
-      console.log(e)
+    onSubmit: async (values) => {
+      try {
+        const res = await getPVWatts({
+          tilt: values.tilt,
+          azimuth: values.orientation,
+          array_type: values.arrayType,
+          module_type: values.moduleType,
+          lat: latitude,
+          lon: longitude,
+          system_capacity: nominalPower,
+        })
+        console.log(res)
+        setAnnualProduction(res.outputs.ac_annual)
+      } catch (err) {
+        console.log(err)
+      }
     },
   })
 
-  console.log(formik.errors)
+  useEffect(() => {
+    formik.setFieldValue('area', area, true)
+  }, [area]) // eslint-disable-line
+
+  const handleToggleVisibilty = () => {
+    setIsVisible(!isVisible)
+  }
 
   return (
     <Container className={className} isVisible={isVisible}>
@@ -70,10 +118,15 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
             </button>
           </span>
           <div>
-            <h2>6000</h2>
-            <label>Annual Production</label>
+            <PVOutput
+              label={'Annual Production'}
+              value={annualProduction}
+              units={'kWac'}
+            />
           </div>
+          <PVArea area={area} kW={nominalPower} />
         </header>
+
         <section>
           <form onSubmit={formik.handleSubmit}>
             <PVRow>
@@ -81,6 +134,7 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
                 name="tilt"
                 id="tilt-input"
                 label="Tilt"
+                error={formik.errors.tilt}
                 value={formik.values.tilt}
                 onChange={formik.handleChange}
               />
@@ -89,10 +143,22 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
                 name="orientation"
                 id="orientation-input"
                 label="Orientation"
+                error={formik.errors.orientation}
                 value={formik.values.orientation}
                 onChange={formik.handleChange}
               />
             </PVRow>
+            {/* <PVRow>
+              <PVInput
+                disabled
+                name="area"
+                id="area-input"
+                label="Installation Area"
+                error={formik.errors.area}
+                value={formik.values.area}
+                onChange={formik.handleChange}
+              />
+            </PVRow> */}
             <PVSelect
               name="arrayType"
               id="arrayType"
@@ -110,7 +176,7 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
               </option>
               <option value={ArrayType.TwoAxis}>2-Axis</option>
             </PVSelect>
-            <PVSelect
+            {/* <PVSelect
               name="installType"
               id="installType"
               label="Install Type"
@@ -119,7 +185,7 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
             >
               <option value={InstallType.Residential}>Residential</option>
               <option value={InstallType.Commercial}>Commercial</option>
-            </PVSelect>
+            </PVSelect> */}
             <PVSelect
               name="moduleType"
               id="moduleType"
@@ -131,6 +197,9 @@ export const PVDetails: FC<PVDetailsProps> = ({ className, area }) => {
               <option value={ModuleType.Premium}>Premium</option>
               <option value={ModuleType.ThinFilm}>Thin Film</option>
             </PVSelect>
+            <PVRow>
+              <Button type="submit">Calculate Production</Button>
+            </PVRow>
           </form>
         </section>
       </div>
@@ -192,10 +261,9 @@ const Container = styled.div<{ isVisible: boolean }>`
 
     /** Upper */
     > header {
-      padding-left: 10px;
-      padding-right: 10px;
-      padding-top: 4px;
-      padding-bottom: 32px;
+      padding-left: 16px;
+      padding-right: 16px;
+      padding-top: 24px;
     }
 
     /* Collapsable bar */
@@ -203,6 +271,11 @@ const Container = styled.div<{ isVisible: boolean }>`
       display: flex;
       align-items: center;
       margin-bottom: 32px;
+    }
+
+    /** PVOutput container */
+    > header div {
+      display: flex;
     }
 
     /** PV Details text */
@@ -227,28 +300,6 @@ const Container = styled.div<{ isVisible: boolean }>`
           color: ${({ theme }) => theme.color.gray[300]};
         }
       }
-    }
-
-    > header div h2 {
-      font-weight: 600;
-      font-size: 48px;
-      line-height: 72px;
-      text-align: center;
-      margin: 0px 0px;
-      > sup {
-        font-size: 14px;
-      }
-    }
-
-    > header div label {
-      display: flex;
-      font-weight: normal;
-      font-size: 14px;
-      line-height: 21px;
-      text-align: center;
-      justify-content: center;
-      margin: 0px 0px;
-      color: ${({ theme }) => theme.color.gray[300]};
     }
   }
 `

@@ -10,7 +10,7 @@ import {
 
 const IndexPage: NextPage = () => {
   const containerRef = useRef<HTMLDivElement>(null)
-  const { map } = useMapbox({ containerRef })
+  const { map, latitude, longitude } = useMapbox({ containerRef })
   useGeocoder(map)
   useGeolocateControl(map)
   const { area } = useMapboxDraw(map)
@@ -18,7 +18,7 @@ const IndexPage: NextPage = () => {
   return (
     <>
       <Map ref={containerRef} className="map-container" />
-      <PVDetails area={area} />
+      <PVDetails area={area} latitude={latitude} longitude={longitude} />
     </>
   )
 }
