@@ -16,7 +16,6 @@ export const Button = styled.button`
   text-align: center;
   border-radius: 4px;
   margin: 10px;
-  font-family: Poppins;
   font-weight: 500;
   font-size: 16px;
   line-height: 18px;

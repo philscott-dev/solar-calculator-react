@@ -187,6 +187,7 @@ export const PVDetails: FC<PVDetailsProps> = ({
 
 const Container = styled.div<{ isVisible: boolean }>`
   position: absolute;
+  pointer-events: none;
   right: 10px;
   top: 10px;
   bottom: 10px;
@@ -200,36 +201,9 @@ const Container = styled.div<{ isVisible: boolean }>`
     left: 10px;
   }
 
-  /** Button */
-  > button {
-    position: absolute;
-    right: 0;
-    top: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    width: 29px;
-    height: 29px;
-    border-radius: 4px;
-    font-size: 17px;
-    border: 1px solid ${({ theme }) => theme.color.gray[100]};
-    background: ${({ theme }) => theme.color.white[100]};
-    cursor: pointer;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    &:hover {
-      background: #efefef;
-    }
-
-    @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
-      top: unset;
-      bottom: 0px;
-      left: 0;
-    }
-  }
-
   /** Card */
   > div {
+    pointer-events: all;
     position: absolute;
     right: 0;
     top: 0;
@@ -243,11 +217,12 @@ const Container = styled.div<{ isVisible: boolean }>`
       bottom: 0;
       left: 0;
       width: unset;
+      margin-right: 20px;
     }
 
     @media screen and (max-width: ${({ theme }) => theme.breakpoint.xsmall}) {
       margin-top: 68px;
-      bottom: 10px;
+      bottom: -5px;
       right: 0;
       width: unset;
     }
@@ -293,6 +268,42 @@ const Container = styled.div<{ isVisible: boolean }>`
           color: ${({ theme }) => theme.color.gray[300]};
         }
       }
+    }
+  }
+
+  /** Button */
+  > button {
+    pointer-events: all;
+    position: absolute;
+    right: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    width: 29px;
+    height: 29px;
+    min-width: 29px;
+    min-height: 29px;
+    border-radius: 4px;
+    font-size: 17px;
+    border: 1px solid ${({ theme }) => theme.color.gray[100]};
+    background: ${({ theme }) => theme.color.white[100]};
+    cursor: pointer;
+    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
+    &:hover {
+      background: #efefef;
+    }
+
+    @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
+      top: unset;
+      bottom: 0px;
+      left: 0;
+    }
+    > svg {
+      min-height: 16px;
+      min-width: 16px;
+      font-size: 16px;
     }
   }
 `
