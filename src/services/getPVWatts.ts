@@ -1,4 +1,4 @@
-import { fetcher } from './api'
+import axios from 'axios'
 import { buildUrl } from 'helpers/url'
 import { ArrayType } from 'enums/ArrayType'
 import { ModuleType } from 'enums/ModuleType'
@@ -70,5 +70,5 @@ export async function getPVWatts(options: GetPVWattsOptions) {
       lon: options.lon,
     },
   })
-  return await fetcher<GetPVWattsResponse>(url)
+  return axios.get<GetPVWattsResponse>(url)
 }

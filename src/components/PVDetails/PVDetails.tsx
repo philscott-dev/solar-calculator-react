@@ -87,8 +87,7 @@ export const PVDetails: FC<PVDetailsProps> = ({
           lon: longitude,
           system_capacity: nominalPower,
         })
-        console.log(res)
-        setAnnualProduction(res.outputs.ac_annual)
+        setAnnualProduction(res.data.outputs.ac_annual)
       } catch (err) {
         console.log(err)
       }
