@@ -10,7 +10,7 @@ import { ArrayType } from 'enums/ArrayType'
 import { InstallType } from 'enums/InstallType'
 import { ModuleType } from 'enums/ModuleType'
 import { useEffect } from 'react'
-import { Button } from 'components/Button'
+import { Button, IconButton } from 'components'
 import { getPVWatts } from 'services'
 import PVArea from './PVArea'
 import { calculateNominalPower } from 'helpers/power'
@@ -104,9 +104,9 @@ export const PVDetails: FC<PVDetailsProps> = ({
 
   return (
     <Container className={className} isVisible={isVisible}>
-      <button onMouseDown={handleToggleVisibilty}>
+      <IconButton onMouseDown={handleToggleVisibilty}>
         <FiZap />
-      </button>
+      </IconButton>
       <div>
         <header>
           <span>
@@ -271,39 +271,17 @@ const Container = styled.div<{ isVisible: boolean }>`
     }
   }
 
-  /** Button */
+  /** IconButton location */
   > button {
     pointer-events: all;
     position: absolute;
     right: 0;
     top: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    width: 29px;
-    height: 29px;
-    min-width: 29px;
-    min-height: 29px;
-    border-radius: 4px;
-    font-size: 17px;
-    border: 1px solid ${({ theme }) => theme.color.gray[100]};
-    background: ${({ theme }) => theme.color.white[100]};
-    cursor: pointer;
-    box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
-    &:hover {
-      background: #efefef;
-    }
 
     @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
       top: unset;
       bottom: 0px;
       left: 0;
-    }
-    > svg {
-      min-height: 16px;
-      min-width: 16px;
-      font-size: 16px;
     }
   }
 `
