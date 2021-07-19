@@ -34,9 +34,9 @@ npm run test
 ## Notes
 
 **Avg solar panel size**
-```
-https://news.energysage.com/average-solar-panel-size-weight/
 
+https://news.energysage.com/average-solar-panel-size-weight/
+```
 - Residential - 65 x 39 inches (62.4078 area - meters squared)
   - 1651mm x 990.6mm
 - Commerical - 78 x 39 inches (77.2668 area - meters squared)
