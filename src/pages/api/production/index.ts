@@ -1,9 +1,9 @@
 import axios from 'axios'
 
+const NREL_URL = 'https://developer.nrel.gov/api/pvwatts/v6.json'
+
 export default async function handler(req: Request, res) {
   const search = req.url.split('?')[1]
-  const response = await axios.get(
-    `https://developer.nrel.gov/api/pvwatts/v6.json?${search}`,
-  )
+  const response = await axios.get(`${NREL_URL}?${search}`)
   res.status(200).send(response.data)
 }
