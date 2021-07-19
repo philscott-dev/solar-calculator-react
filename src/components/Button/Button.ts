@@ -17,13 +17,17 @@ export const Button = styled.button`
   border-radius: 4px;
   margin: 10px;
   font-family: Poppins;
-  font-weight: bold;
-  font-size: 14px;
+  font-weight: 500;
+  font-size: 16px;
   line-height: 18px;
   ${({ theme }) => css`
     color: ${theme.color.white[100]};
     background: ${theme.color.blue[300]};
     border-color: ${theme.color.blue[300]};
+    &:hover {
+      background: ${theme.color.blue[200]};
+      border-color: ${theme.color.blue[200]};
+    }
   `}
   &:disabled {
     opacity: 0.5;

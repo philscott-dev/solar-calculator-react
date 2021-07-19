@@ -17,6 +17,7 @@ const theme: Theme = {
     },
     blue: {
       300: '#0094FF',
+      200: '#159DFF',
     },
   },
   font: {
