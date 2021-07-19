@@ -27,9 +27,20 @@ npm start
 npm run test
 ```
 
+<br />
 
-<br />
-<br />
+## Assumptions
+```
+/**
+ * Average Residential Panels
+ *
+ * Dimensions: 65 x 39 inches
+ * Area: 62.4078 meters squared
+ * Watts: 300w
+ */
+ ```
+
+ <br />
 
 ## Notes
 
