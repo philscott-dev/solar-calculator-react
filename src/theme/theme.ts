@@ -12,6 +12,12 @@ const theme: Theme = {
     white: {
       100: '#FFFFFF',
     },
+    red: {
+      300: '#ff0000',
+    },
+    blue: {
+      300: '#0094FF',
+    },
   },
   font: {
     size: {
