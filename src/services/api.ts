@@ -16,7 +16,7 @@ export async function fetcher<T>(
     const { method, headers, body } = options
     const res = await fetch(url.toString(), {
       method,
-      mode: 'no-cors',
+      mode: 'cors',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
