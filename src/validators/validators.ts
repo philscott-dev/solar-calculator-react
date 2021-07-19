@@ -37,12 +37,12 @@ export const validateArea = ({ value, errors }: ValidatorOptions) => {
   if (!value) {
     errors = {
       ...errors,
-      area: 'Please use the [Polygon Tool] to create an installation area.',
+      area: 'Please use the [ Polygon Tool ] to create an installation area.',
     }
   } else if (value <= 0) {
     errors = {
       ...errors,
-      area: 'Please use the [Polygon Tool] to create an installation area.',
+      area: 'Please use the [ Polygon Tool ] to create an installation area.',
     }
   }
 

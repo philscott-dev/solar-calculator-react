@@ -85,7 +85,7 @@ describe('validateArea', () => {
     const value = 0
     errors = validateArea({ value, errors })
     const expected = {
-      area: 'Please use the [Polygon Tool] to create an installation area.',
+      area: 'Please use the [ Polygon Tool ] to create an installation area.',
     }
     expect(errors).toHaveProperty('area')
     expect(errors).toMatchObject(expected)
@@ -95,7 +95,7 @@ describe('validateArea', () => {
     const value = undefined
     errors = validateArea({ value, errors })
     const expected = {
-      area: 'Please use the [Polygon Tool] to create an installation area.',
+      area: 'Please use the [ Polygon Tool ] to create an installation area.',
     }
     expect(errors).toHaveProperty('area')
     expect(errors).toMatchObject(expected)
