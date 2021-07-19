@@ -13,7 +13,12 @@ const PVArea: FC<PVAreaProps> = ({ className, area, kW }) => {
       <div>
         <label>Nominal Power:</label>
         <div>
-          <p>{kW} kW</p>
+          <p>
+            {kW.toLocaleString(undefined, {
+              maximumFractionDigits: 2,
+            })}{' '}
+            kW
+          </p>
         </div>
       </div>
       <div>

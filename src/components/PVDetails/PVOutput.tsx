@@ -14,7 +14,7 @@ const PVOutput: FC<PVOutputProps> = ({ className, value, label, units }) => {
       <div>
         <h2>
           {value.toLocaleString(undefined, {
-            minimumFractionDigits: 1,
+            maximumFractionDigits: 2,
           })}
         </h2>
         <p>{units}</p>
