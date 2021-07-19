@@ -148,17 +148,6 @@ export const PVDetails: FC<PVDetailsProps> = ({
                 onChange={formik.handleChange}
               />
             </PVRow>
-            {/* <PVRow>
-              <PVInput
-                disabled
-                name="area"
-                id="area-input"
-                label="Installation Area"
-                error={formik.errors.area}
-                value={formik.values.area}
-                onChange={formik.handleChange}
-              />
-            </PVRow> */}
             <PVSelect
               name="arrayType"
               id="arrayType"
@@ -176,16 +165,6 @@ export const PVDetails: FC<PVDetailsProps> = ({
               </option>
               <option value={ArrayType.TwoAxis}>2-Axis</option>
             </PVSelect>
-            {/* <PVSelect
-              name="installType"
-              id="installType"
-              label="Install Type"
-              value={formik.values.installType}
-              onChange={formik.handleChange}
-            >
-              <option value={InstallType.Residential}>Residential</option>
-              <option value={InstallType.Commercial}>Commercial</option>
-            </PVSelect> */}
             <PVSelect
               name="moduleType"
               id="moduleType"
@@ -211,10 +190,16 @@ const Container = styled.div<{ isVisible: boolean }>`
   position: absolute;
   right: 10px;
   top: 10px;
+  bottom: 10px;
   width: 100%;
   max-width: 375px;
   min-height: 100px;
   margin-right: 10px;
+
+  @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
+    right: unset;
+    left: 10px;
+  }
 
   /** Button */
   > button {
@@ -236,10 +221,19 @@ const Container = styled.div<{ isVisible: boolean }>`
     &:hover {
       background: #efefef;
     }
+
+    @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
+      top: unset;
+      bottom: 0px;
+      left: 0;
+    }
   }
 
   /** Card */
   > div {
+    position: absolute;
+    right: 0;
+    top: 0;
     display: ${({ isVisible }) => (isVisible ? 'block' : 'none')};
     background: white;
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
@@ -247,8 +241,8 @@ const Container = styled.div<{ isVisible: boolean }>`
 
     @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
       top: unset;
-      bottom: 10px;
-      right: 0;
+      bottom: 0;
+      left: 0;
       width: unset;
     }
 
