@@ -9,21 +9,20 @@ interface FetchOptions extends Omit<RequestInit, 'body'> {
 }
 
 export async function fetcher<T>(
-  url: string | URL,
+  url: string,
   options: FetchOptions = {},
 ): Promise<T> {
   try {
-    const { method, headers, body } = options
-    const res = await fetch(url.toString(), {
+    const { method, headers } = options
+    const res = await fetch(url, {
       method,
       mode: 'cors',
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
+        ...headers,
       },
     })
-    console.log(res)
     const data = await res.text()
-    console.log(data)
     return JSON.parse(data) as T
   } catch (err) {
     console.log(err)
