@@ -15,6 +15,8 @@ export function useMapboxDraw(map: MutableRefObject<Map>) {
       const area = turf.area(data)
       const roundedArea = Math.round(area * 100) / 100
       setArea(roundedArea)
+    } else {
+      setArea(0)
     }
   }
 
