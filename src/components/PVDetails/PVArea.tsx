@@ -5,11 +5,13 @@ interface PVAreaProps {
   className?: string
   area: number
   kW: number
+  error?: string
 }
 
-const PVArea: FC<PVAreaProps> = ({ className, area, kW }) => {
+export const PVArea: FC<PVAreaProps> = ({ className, area, kW, error }) => {
   return (
-    <div className={className}>
+    <Container className={className} isError={error?.length > 0}>
+      {error ? <small>{error}</small> : null}
       <div>
         <label>Nominal Power:</label>
         <div>
@@ -29,16 +31,17 @@ const PVArea: FC<PVAreaProps> = ({ className, area, kW }) => {
           </p>
         </div>
       </div>
-    </div>
+    </Container>
   )
 }
 
-export default styled(PVArea)`
+const Container = styled.div<{ isError: boolean }>`
   display: flex;
   flex-direction: column;
   padding: 10px 16px;
   background: #f2f2f2;
-  border: 1px solid #dbdbdb;
+  border: 1px solid
+    ${({ isError, theme }) => (isError ? theme.color.red[300] : '#dbdbdb')};
   border-radius: 4px;
   margin-bottom: 16px;
 
@@ -65,5 +68,13 @@ export default styled(PVArea)`
     line-height: 18px;
     margin: 0;
     padding: 0;
+  }
+
+  /** Error Text */
+  > small {
+    color: ${({ theme }) => theme.color.red[300]};
+    font-size: 13px;
+    margin-bottom: 8px;
+    font-weight: 400;
   }
 `

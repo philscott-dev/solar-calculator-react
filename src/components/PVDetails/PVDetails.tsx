@@ -2,18 +2,18 @@ import styled from '@emotion/styled'
 import { FC, useState, useMemo } from 'react'
 import { useFormik } from 'formik'
 import { FiX, FiZap } from 'react-icons/fi'
-import PVSelect from './PVSelect'
 import PVInput from './PVInput'
 import PVRow from './PVRow'
 import PVOutput from './PVOutput'
 import { ArrayType } from 'enums/ArrayType'
-import { InstallType } from 'enums/InstallType'
 import { ModuleType } from 'enums/ModuleType'
-import { useEffect } from 'react'
 import { Button, IconButton } from 'components'
 import { getPVWatts } from 'services'
-import PVArea from './PVArea'
+import { PVArea } from './PVArea'
 import { calculateNominalPower } from 'helpers/power'
+import { validateArea, validateOrientation, validateTilt } from 'validators'
+import { ApiStatus } from 'enums/ApiStatus'
+import { useEffect } from 'react'
 
 interface PVDetailsProps {
   className?: string
@@ -30,74 +30,68 @@ export const PVDetails: FC<PVDetailsProps> = ({
 }) => {
   const [isVisible, setIsVisible] = useState(true)
   const [annualProduction, setAnnualProduction] = useState(0)
+  const [apiStatus, setApiStatus] = useState<ApiStatus>(ApiStatus.Default)
+
+  // memoize calculation of nominal power
   const nominalPower = useMemo(() => calculateNominalPower(area) || 0, [area])
 
+  // handle polygon tool area changes
+  useEffect(() => {
+    if (area > 0) {
+      // Revalidate on area update
+      formik.validateForm()
+    } else {
+      // Reset annual poduction
+      setAnnualProduction(0)
+    }
+  }, [area]) //eslint-disable-line
+
+  // useFormik hook for form validation
   const formik = useFormik({
     initialValues: {
       tilt: 0,
       orientation: 0,
       area,
-      arrayType: ArrayType.FixedOpenRack,
-      installType: InstallType.Residential,
-      moduleType: ModuleType.Standard,
     },
+    // validate the form fields
     validate: (values) => {
       let errors = {}
-      /**
-       * Tilt Validators
-       */
-      if (values.tilt < 0) {
-        errors = { ...errors, tilt: 'Must be 0 or more' }
-      } else if (values.tilt > 90) {
-        errors = { ...errors, tilt: 'Must be 90 or less' }
-      }
-
-      /**
-       * Orientation Validators
-       */
-      if (values.orientation < 0) {
-        errors = {
-          ...errors,
-          orientation: 'Must be 0 or more',
-        }
-      } else if (values.orientation >= 360) {
-        errors = { ...errors, orientation: 'Must be less than 360' }
-      }
-
-      /**
-       * Area Validators
-       */
-
-      if (values.area <= 0) {
-        errors = {
-          ...errors,
-          area: 'Please use the polygon tool to create an installation.',
-        }
-      }
+      errors = validateTilt({ value: values.tilt, errors })
+      errors = validateOrientation({ value: values.orientation, errors })
+      errors = validateArea({ value: area, errors })
       return errors
     },
+    validateOnBlur: true,
+    validateOnMount: false,
+    validateOnChange: true,
+    // handle form submit
     onSubmit: async (values) => {
       try {
-        const res = await getPVWatts({
+        // set loadin and error bools
+        setApiStatus(ApiStatus.Loading)
+        // execute the query to NERL
+        const { data } = await getPVWatts({
           tilt: values.tilt,
           azimuth: values.orientation,
-          array_type: values.arrayType,
-          module_type: values.moduleType,
           lat: latitude,
           lon: longitude,
+          array_type: ArrayType.FixedOpenRack,
+          module_type: ModuleType.Premium,
           system_capacity: nominalPower,
         })
-        setAnnualProduction(res.data.outputs.ac_annual)
+        // reset loading state
+        setApiStatus(ApiStatus.Default)
+        // set display for annual production
+        setAnnualProduction(data.outputs.ac_annual)
       } catch (err) {
+        // handle errors
         console.log(err)
+        setApiStatus(ApiStatus.Error)
       }
     },
   })
 
-  useEffect(() => {
-    formik.setFieldValue('area', area, true)
-  }, [area]) // eslint-disable-line
-
+  // handle show/hide for PV Detail Card
   const handleToggleVisibilty = () => {
     setIsVisible(!isVisible)
   }
@@ -121,9 +115,10 @@ export const PVDetails: FC<PVDetailsProps> = ({
               label={'Annual Production'}
               value={annualProduction}
               units={'kWac'}
+              apiStatus={apiStatus}
             />
           </div>
-          <PVArea area={area} kW={nominalPower} />
+          <PVArea area={area} kW={nominalPower} error={formik.errors.area} />
         </header>
 
         <section>
@@ -147,34 +142,6 @@ export const PVDetails: FC<PVDetailsProps> = ({
                 onChange={formik.handleChange}
               />
             </PVRow>
-            <PVSelect
-              name="arrayType"
-              id="arrayType"
-              label="Array Type"
-              value={formik.values.arrayType}
-              onChange={formik.handleChange}
-            >
-              <option value={ArrayType.FixedOpenRack}>Fixed - Open Rack</option>
-              <option value={ArrayType.FixedRoofMouned}>
-                Fixed - Roof Mounted
-              </option>
-              <option value={ArrayType.OneAxis}>1-Axis</option>
-              <option value={ArrayType.OneAxisBacktracking}>
-                1-Axis Backtracking
-              </option>
-              <option value={ArrayType.TwoAxis}>2-Axis</option>
-            </PVSelect>
-            <PVSelect
-              name="moduleType"
-              id="moduleType"
-              label="Module Type"
-              value={formik.values.moduleType}
-              onChange={formik.handleChange}
-            >
-              <option value={ModuleType.Standard}>Standard</option>
-              <option value={ModuleType.Premium}>Premium</option>
-              <option value={ModuleType.ThinFilm}>Thin Film</option>
-            </PVSelect>
             <PVRow>
               <Button type="submit">Calculate Production</Button>
             </PVRow>
@@ -186,6 +153,7 @@ export const PVDetails: FC<PVDetailsProps> = ({
 }
 
 const Container = styled.div<{ isVisible: boolean }>`
+  /** Outter Container */
   position: absolute;
   pointer-events: none;
   right: 10px;
@@ -227,14 +195,14 @@ const Container = styled.div<{ isVisible: boolean }>`
       width: unset;
     }
 
-    /** Upper */
+    /** Upper Header */
     > header {
       padding-left: 16px;
       padding-right: 16px;
       padding-top: 24px;
     }
 
-    /* Collapsable bar */
+    /* title bar*/
     > header span {
       display: flex;
       align-items: center;
@@ -253,7 +221,7 @@ const Container = styled.div<{ isVisible: boolean }>`
       margin: 0;
       margin-left: 8px;
     }
-    /** PV Details text */
+    /** X Button */
     > header span button {
       margin-left: auto;
       display: flex;
@@ -271,7 +239,7 @@ const Container = styled.div<{ isVisible: boolean }>`
     }
   }
 
-  /** IconButton location */
+  /** IconButton */
   > button {
     pointer-events: all;
     position: absolute;

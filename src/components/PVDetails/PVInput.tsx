@@ -34,7 +34,9 @@ const PVInput: FC<PVInputProps> = ({
         value={value}
         onChange={onChange}
       />
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>
+        {label} {String.fromCharCode(176)}
+      </label>
       {error ? <PVError>{error}</PVError> : null}
     </div>
   )

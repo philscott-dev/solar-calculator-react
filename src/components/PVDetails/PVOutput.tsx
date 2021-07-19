@@ -1,4 +1,5 @@
 import styled from '@emotion/styled'
+import { ApiStatus } from 'enums/ApiStatus'
 import { FC } from 'react'
 
 interface PVOutputProps {
@@ -6,19 +7,46 @@ interface PVOutputProps {
   value: number
   label: string
   units: string
+  apiStatus: ApiStatus
 }
 
-const PVOutput: FC<PVOutputProps> = ({ className, value, label, units }) => {
+const PVOutput: FC<PVOutputProps> = ({
+  className,
+  value,
+  label,
+  units,
+  apiStatus,
+}) => {
+  function renderOutput() {
+    switch (apiStatus) {
+      case ApiStatus.Loading:
+        return (
+          <div>
+            <h2>Calculating</h2>
+          </div>
+        )
+      case ApiStatus.Error:
+        return (
+          <div>
+            <h2>Error</h2>
+          </div>
+        )
+      default:
+        return (
+          <div>
+            <h2>
+              {value.toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
+            </h2>
+            <p>{units}</p>
+          </div>
+        )
+    }
+  }
   return (
     <div className={className}>
-      <div>
-        <h2>
-          {value.toLocaleString(undefined, {
-            maximumFractionDigits: 2,
-          })}
-        </h2>
-        <p>{units}</p>
-      </div>
+      {renderOutput()}
       <label>{label}</label>
     </div>
   )
@@ -33,6 +61,7 @@ export default styled(PVOutput)`
   > div {
     display: flex;
     justify-content: center;
+    min-height: 42px;
   }
   > div h2 {
     font-size: 32px;
