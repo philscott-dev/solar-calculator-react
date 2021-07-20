@@ -14,10 +14,12 @@ NEXT_PUBLIC_NREL_API_KEY=<YOUR_KEY>
 ```
 **Start The App**
 ```
+npm install
 npm run dev
 
 or
 
+npm install
 npm run build
 npm start
 ```
