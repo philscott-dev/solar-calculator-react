@@ -56,6 +56,7 @@ const Container = styled.div<{ isError: boolean }>`
     display: flex;
     flex-grow: 0;
     justify-content: space-between;
+    align-items: center;
     margin: 4px 0;
   }
 

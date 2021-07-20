@@ -14,6 +14,7 @@ import { calculateNominalPower } from 'helpers/power'
 import { validateArea, validateOrientation, validateTilt } from 'validators'
 import { ApiStatus } from 'enums/ApiStatus'
 import { useEffect } from 'react'
+import PVInstructions from './PVInstructions'
 
 interface PVDetailsProps {
   className?: string
@@ -28,9 +29,10 @@ export const PVDetails: FC<PVDetailsProps> = ({
   longitude,
   latitude,
 }) => {
-  const [isVisible, setIsVisible] = useState(true)
-  const [annualProduction, setAnnualProduction] = useState(0)
-  const [apiStatus, setApiStatus] = useState<ApiStatus>(ApiStatus.Default)
+  const [isInstructionsVisible, setInstructionsVisible] = useState(true) // controls instruction screen visiblity
+  const [isVisible, setIsVisible] = useState(true) // controls modal visiblity
+  const [annualProduction, setAnnualProduction] = useState(0) // yearly production
+  const [apiStatus, setApiStatus] = useState<ApiStatus>(ApiStatus.Default) // api query state (loading/error)
 
   // memoize calculation of nominal power
   const nominalPower = useMemo(() => calculateNominalPower(area) || 0, [area])
@@ -96,58 +98,72 @@ export const PVDetails: FC<PVDetailsProps> = ({
     setIsVisible(!isVisible)
   }
 
+  const handleInstructionsClick = () => {
+    setInstructionsVisible(!isInstructionsVisible)
+  }
+
   return (
     <Container className={className} isVisible={isVisible}>
       <IconButton onMouseDown={handleToggleVisibilty}>
         <FiZap /> PV Details
       </IconButton>
-      <div>
-        <header>
-          <span>
-            <FiZap />
-            <h3>PV Details</h3>
-            <button onMouseDown={handleToggleVisibilty}>
-              <FiX />
-            </button>
-          </span>
-          <div>
-            <PVOutput
-              label={'Annual Production'}
-              value={annualProduction}
-              units={'kWac'}
-              apiStatus={apiStatus}
-            />
-          </div>
-          <PVArea area={area} kW={nominalPower} error={formik.errors.area} />
-        </header>
-
-        <section>
-          <form onSubmit={formik.handleSubmit}>
-            <PVRow>
-              <PVInput
-                name="tilt"
-                id="tilt-input"
-                label="Tilt"
-                error={formik.errors.tilt}
-                value={formik.values.tilt}
-                onChange={formik.handleChange}
+      {!isInstructionsVisible ? (
+        <div>
+          <header>
+            <span>
+              <FiZap />
+              <h3>PV Details</h3>
+              <button onMouseDown={handleToggleVisibilty}>
+                <FiX />
+              </button>
+            </span>
+            <div>
+              <PVOutput
+                label={'Annual Production'}
+                value={annualProduction}
+                units={'kWac'}
+                apiStatus={apiStatus}
               />
+            </div>
+            <PVArea area={area} kW={nominalPower} error={formik.errors.area} />
+          </header>
 
-              <PVInput
-                name="orientation"
-                id="orientation-input"
-                label="Orientation"
-                error={formik.errors.orientation}
-                value={formik.values.orientation}
-                onChange={formik.handleChange}
-              />
-            </PVRow>
-            <PVRow>
-              <Button type="submit">Calculate Production</Button>
-            </PVRow>
-          </form>
-        </section>
-      </div>
+          <section>
+            <form onSubmit={formik.handleSubmit}>
+              <PVRow>
+                <PVInput
+                  name="tilt"
+                  id="tilt-input"
+                  label="Tilt"
+                  error={formik.errors.tilt}
+                  value={formik.values.tilt}
+                  onChange={formik.handleChange}
+                />
+
+                <PVInput
+                  name="orientation"
+                  id="orientation-input"
+                  label="Orientation"
+                  error={formik.errors.orientation}
+                  value={formik.values.orientation}
+                  onChange={formik.handleChange}
+                />
+              </PVRow>
+              <PVRow>
+                <Button type="submit">Calculate Production</Button>
+              </PVRow>
+            </form>
+            <a onMouseDown={handleInstructionsClick}>View Instructions</a>
+          </section>
+        </div>
+      ) : (
+        <div>
+          <PVInstructions />
+          <PVRow>
+            <Button onMouseDown={handleInstructionsClick}>Get Started</Button>
+          </PVRow>
+        </div>
+      )}
     </Container>
   )
 }
@@ -179,6 +195,7 @@ const Container = styled.div<{ isVisible: boolean }>`
     background: white;
     box-shadow: 0 0 10px 2px rgb(0 0 0 / 10%);
     border-radius: 5px;
+    transition: all 1s ease-in-out;
 
     @media screen and (max-width: ${({ theme }) => theme.breakpoint.small}) {
       top: unset;
@@ -195,8 +212,27 @@ const Container = styled.div<{ isVisible: boolean }>`
       width: unset;
     }
 
+    > section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    > section a {
+      text-align: center;
+      text-decoration: underline;
+      font-size: 14px;
+      padding-bottom: 16px;
+      padding-top: 8px;
+      cursor: pointer;
+      color: ${({ theme }) => theme.color.blue[300]};
+      &:hover {
+        color: ${({ theme }) => theme.color.blue[200]};
+      }
+    }
+
     /** Upper Header */
     > header {
+      box-sizing: border-box;
       padding-left: 16px;
       padding-right: 16px;
       padding-top: 24px;
